@@ -1,0 +1,10 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="Container" style="flex-grow: 0; -unity-text-align: upper-left; align-items: auto; align-content: auto; justify-content: flex-start; align-self: auto; height: 66px; width: 160px; top: 200px; right: auto; position: relative; left: auto;">
+        <ui:Image name="CoinImage" style="background-image: url(&quot;project://database/Assets/Images/CoinImage.png?fileID=2800000&amp;guid=c2b7a0ee5ecacec45b6458954dbb88a2&amp;type=3#CoinImage&quot;); height: 56px; width: 52px; top: auto; right: auto; align-items: stretch; justify-content: flex-start; align-self: auto; align-content: flex-start; left: auto; position: absolute;"/>
+        <ui:Label name="CoinValue" data-source="project://database/Assets/Currency.asset?fileID=11400000&amp;guid=68cc07a6101d8f24cbae883d5c2f03ea&amp;type=2#Currency" style="-unity-font-definition: url(&quot;project://database/Packages/com.unity.render-pipelines.core/Runtime/Debugging/Prefabs/Fonts/PerfectDOSVGA437.ttf?fileID=12800000&amp;guid=74a5091d8707f334b9a5c31ef71a64ba&amp;type=3#PerfectDOSVGA437&quot;); font-size: 30px; -unity-font-style: normal; top: 5px; width: 100px; height: 48px; right: auto; background-position-x: center; text-overflow: clip; opacity: 1; flex-shrink: 1; left: 50px; position: absolute;">
+            <Bindings>
+                <ui:DataBinding property="text" data-source-path="currentCurrency" binding-mode="ToTarget"/>
+            </Bindings>
+        </ui:Label>
+    </ui:VisualElement>
+</ui:UXML>

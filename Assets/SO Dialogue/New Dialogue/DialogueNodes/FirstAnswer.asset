@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3008ada3a10f894a83fb82f6833deb6, type: 3}
+  m_Name: FirstAnswer
+  m_EditorClassIdentifier: Assembly-CSharp::AnswerNode
+  nextNode: {fileID: 0}
+  answers:
+  - answerText: Yes!
+    nextNode: {fileID: 11400000, guid: 676b9bedc87e820458dfabcbc205aad5, type: 2}
+  - answerText: No!
+    nextNode: {fileID: 11400000, guid: d0bb5e31d9105ac44a45ff58ffd63a36, type: 2}

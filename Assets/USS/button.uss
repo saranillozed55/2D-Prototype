@@ -1,0 +1,21 @@
+:root {
+}
+
+.button {
+    border-top-width: 3px;
+    border-right-width: 3px;
+    border-bottom-width: 3px;
+    border-left-width: 3px;
+}
+
+.button:hover {
+    scale: 1.1 1.1 1.1;
+    transition-duration: 0.25s;
+}
+
+
+
+.hidden {
+    opacity: 1;
+    display: none;
+}

@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fea5ed00959c7ce41b24e69a3be3b3ed, type: 3}
+  m_Name: TestGraph
+  m_EditorClassIdentifier: Assembly-CSharp::DialogueGraph
+  startNode: {fileID: 11400000, guid: 10b3f656c0150ae42bdc657537e94b39, type: 2}
+  allNodes:
+  - {fileID: 11400000, guid: 10b3f656c0150ae42bdc657537e94b39, type: 2}
+  - {fileID: 11400000, guid: 12efdd4c22da83b44aeac3f7317a6281, type: 2}
