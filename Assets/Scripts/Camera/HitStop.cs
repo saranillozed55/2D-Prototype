@@ -4,20 +4,18 @@ using UnityEngine;
 /*
  *Later implement localtimescale for some enemies
  */
-public class HitStop : MonoBehaviour
+public class HitStop : GenericSingleton<HitStop>
 {
-    public static HitStop Instance;
-
     private bool isWaiting = false;
 
-    private void Awake()
+    protected override void Awake()
     {
-        if (Instance == null) Instance = this;
+        base.Awake();
     }
-
     public void Stop(float duration)
     {
         if (isWaiting) return;
+        StopAllCoroutines(); // stop's hitstops from stacking
         StartCoroutine(Wait(duration));
     }
 

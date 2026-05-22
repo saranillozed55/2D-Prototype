@@ -9,6 +9,7 @@ using UnityEngine.UIElements;
  * Whenever someone talks to a Shop this will open and will be pushed into the stack.
  * This script loads the items of the NPC with their runTimeInventory
  */
+
 public class ShopMenuPanel : UIToolkitPanel
 {
     private ShopData _currentShopData;

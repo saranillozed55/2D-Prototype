@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -49,7 +50,7 @@ public class PlayerController : MonoBehaviour
 
     [Header("Ground Check")]
     [SerializeField] private float groundCheckDistance;
-    public bool isGrounded { get; private set;}
+    public bool isGrounded { get; private set; }
 
     [Header("Falling")]
     [SerializeField] private float fallGravityMultiplier = 3f;
@@ -93,12 +94,16 @@ public class PlayerController : MonoBehaviour
     [Header("Facing Direction")]
     public bool IsFacingRight { get; private set; }
 
-    [Header("Camera Stuff")]
+    [Header("Camera Settings")]
     [SerializeField] private GameObject cameraFollow;
+    [SerializeField] private CinemachineImpulseSource _impulseSource;
 
     [Header("Attack Settings")]
     [SerializeField] private float attackRate = 1f;
     private float canAttack = -1f;
+
+    [Header("Attack Collider")]
+    [SerializeField] private BoxCollider2D _attackCollider2D;
 
     public float InvincibilityDuration => invincibilityDuration;
     public float FlashDuration => flashDuration;
@@ -120,6 +125,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         boxCol = GetComponent<BoxCollider2D>();
+        _impulseSource = GetComponent<CinemachineImpulseSource>();
         IsFacingRight = true;
     }
 
@@ -127,6 +133,7 @@ public class PlayerController : MonoBehaviour
     {
         Debug.Log("Collider world size: " + boxCol.bounds.size);
         CameraManager.Instance.SetPlayerRigidody(rb);
+        _attackCollider2D.enabled = false;
     }
 
     private void OnEnable()
@@ -156,7 +163,6 @@ public class PlayerController : MonoBehaviour
         GameManager.OnGameStateChanged -= HandleGameStateChanged;
         _onPlayerDeath.OnEventRaised -= HandlePlayerDeath;
         _onPlayerRespawn.OnEventRaised -= HandlePlayerRespawning;
-
 
     }
 
@@ -191,7 +197,7 @@ public class PlayerController : MonoBehaviour
     {
         HeadCornerCorrect();
 
-        if (!CanControl()|| isKnockbacked) return;
+        if (!CanControl() || isKnockbacked) return;
         FallControl();
         MovePlayer();
         TurnCheck();
@@ -209,7 +215,7 @@ public class PlayerController : MonoBehaviour
 
     private void HandleAttack()
     {
-        if(Time.time > canAttack)
+        if (Time.time > canAttack)
         {
             Debug.Log("Attacked");
             AttackEvent?.Invoke();
@@ -246,11 +252,12 @@ public class PlayerController : MonoBehaviour
 
         rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpForce);
 
+
         if (!inputHandler.IsJumpHeld())
         {
             HandleJumpCut();
         }
-
+        
         jumpLeft--;
 
         //prevent double jump using coyote time
@@ -309,14 +316,13 @@ public class PlayerController : MonoBehaviour
 
         RaycastHit2D hit = Physics2D.BoxCast(boxOrigin, new Vector2(detectionWidth, 0.1f), 0f, Vector2.up, cornerCorrectionLength, groundMask);
 
-        if(hit.collider != null)
+        if (hit.collider != null)
         {
             rb.position = new Vector2(transform.position.x, hit.point.y - 0.51f);
         }
     }
 
     #endregion
-
     private bool CheckGrounded()
     {
         //bottom center of the collider
@@ -447,7 +453,7 @@ public class PlayerController : MonoBehaviour
 
         bool atApex = Mathf.Abs(vy) < apexThreshold && !isGrounded && apexEarned;
 
-        if(atApex)
+        if (atApex)
         {
             rb.gravityScale = apexGravityMultiplier;
         }
@@ -483,7 +489,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Turn()
     {
-        if (IsFacingRight)
+    if (IsFacingRight)
         {
             Vector3 rotator = new Vector3(transform.rotation.x, 180f, transform.rotation.z);
             transform.rotation = Quaternion.Euler(rotator);
@@ -542,5 +548,14 @@ public class PlayerController : MonoBehaviour
     {
         //CHANGE/UPDATE : THiS
         SetState(PlayerState.Idle);
+    }
+
+    public void SlashColliderEnable()
+    {
+        _attackCollider2D.enabled = true;
+    }
+    public void DisableAttackCollider()
+    {
+        _attackCollider2D.enabled = false;
     }
 }

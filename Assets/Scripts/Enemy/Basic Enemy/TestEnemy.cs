@@ -7,10 +7,11 @@ using UnityEngine.Rendering;
 
 public class TestEnemy : Enemy
 {
-    public Rigidbody2D Rb { get; private set; }
+    public Rigidbody2D _enemyRb;
     public BoxCollider2D PhysicsCollider { get; private set; }
     public BoxCollider2D HurtBox { get; private set; }
 
+    //Move waypoints to enemy and then just check if the enemypath is not null
     [Header("Waypoints")]
     public PatrolPath EnemyPath;
 
@@ -20,11 +21,7 @@ public class TestEnemy : Enemy
 
     [Header("Death Settings")]
     [SerializeField] private float deathTimer = 2f;
-
-    [Header("Knockback")]
-    [SerializeField] private float knockbackForce = 5f;
-    [SerializeField] private float knockbackDuration = 0.5f;
-    public bool isKnockbacked = false;
+    
 
     [Header("Hurt Settings")]
     [SerializeField] private bool isHurt;
@@ -54,7 +51,7 @@ public class TestEnemy : Enemy
 
     private void Start()
     {
-        Rb = GetComponent<Rigidbody2D>();
+        _enemyRb = _rb;
         PhysicsCollider = GetComponent<BoxCollider2D>();
         HurtBox = GetComponentInChildren<BoxCollider2D>();
 
@@ -86,7 +83,7 @@ public class TestEnemy : Enemy
     protected override void Dead()
     {
         base.Dead();
-        Rb.linearVelocity = Vector2.zero;
+        _enemyRb.linearVelocity = Vector2.zero;
         _stateMachine.TransitionTo(new DeathState(this, _stateMachine));
     }
 
@@ -94,6 +91,10 @@ public class TestEnemy : Enemy
     public override void Hurt(int damage)
     {
         base.Hurt(damage);
+
+        _impulseSource.GenerateImpulse(Vector3.up * 0.1f);
+        HitStop.Instance.Stop(0.05f);
+        
         if (!isHurt)
         {
             Debug.Log("Enemy was hurt. Starting knockback.");
@@ -105,8 +106,8 @@ public class TestEnemy : Enemy
     {
         isKnockbacked = true;
         isHurt = true;
-        Rb.linearVelocity = Vector2.zero;
-        Rb.linearVelocity = -transform.right * KnockbackForce;
+        _enemyRb.linearVelocity = Vector2.zero;
+        _enemyRb.linearVelocity = -transform.right * KnockbackForce;
         yield return new WaitForSeconds(0.2f);
         isKnockbacked = false;
         isHurt = false;
@@ -140,20 +141,23 @@ public class TestEnemy : Enemy
     {
         OnSpottedPlayer?.Invoke();
     }
+
+
     //Refactor so that any state knows about the player always faces them, and only patrol uses velocity-based facing
-    private void HandleTurn()
+    //Refactor: Add this to Enemy instead because all enemies will have to turn to the enemy.
+    protected override void HandleTurn()
     {
         //if alerting or chasing, face the player directly
-        if(_stateMachine.CurrentState is ChaseState)
+        if (_stateMachine.CurrentState is ChaseState)
         {
             float directionToPlayer = playerTransform.position.x - transform.position.x;
             float angle = directionToPlayer > 0 ? 0 : 180f;
             transform.rotation = Quaternion.Euler(0, angle, 0);
         }
-        else if(Mathf.Abs(Rb.linearVelocity.x) > 0.1f)
+        else
         {
-            float angle = Rb.linearVelocity.x > 0 ? 0 : 180f;
-            transform.rotation = Quaternion.Euler(0, angle, 0);
+            base.HandleTurn();
         }
+ 
     }
 }

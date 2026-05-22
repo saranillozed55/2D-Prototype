@@ -29,8 +29,8 @@ public class ChaseState : IState
 
     private void ChasePLayer()
     {
-        float directionX = Mathf.Sign(_enemy.PlayerLocation.position.x - _enemy.Rb.position.x);    
-        _enemy.Rb.linearVelocity = new Vector2(directionX * _enemy.MoveSpeed, _enemy.Rb.linearVelocity.y);
+        float directionX = Mathf.Sign(_enemy.PlayerLocation.position.x - _enemy._enemyRb.position.x);    
+        _enemy._enemyRb.linearVelocity = new Vector2(directionX * _enemy.MoveSpeed, _enemy._enemyRb.linearVelocity.y);
     }
 
     private void CheckLoseAggro()

@@ -16,6 +16,7 @@ public abstract class GenericSingleton<T> : MonoBehaviour where T : MonoBehaviou
             return;
         }
         Instance = this as T;
+        //DontDestroyOnLoad(gameObject);
     }
     #endregion
 }

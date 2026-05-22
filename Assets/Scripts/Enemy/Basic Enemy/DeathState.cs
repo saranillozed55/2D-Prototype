@@ -15,8 +15,8 @@ public class DeathState : IState
     public void Enter()
     {
         Debug.Log("Entered Death State");
-        _enemy.Rb.linearVelocity = Vector2.zero;
-        _enemy.Rb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
+        _enemy._enemyRb.linearVelocity = Vector2.zero;
+        _enemy._enemyRb.constraints = RigidbodyConstraints2D.FreezePositionX | RigidbodyConstraints2D.FreezeRotation;
         _enemy.gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
         _enemy.StartCoroutine(BasicEnemyDeathRoutine());
     }

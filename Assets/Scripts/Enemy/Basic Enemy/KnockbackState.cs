@@ -30,8 +30,8 @@ public class KnockbackState : IState
 
     private IEnumerator KnockbackRoutine()
     {
-        _enemy.Rb.linearVelocity = Vector2.zero; // stop movement
-        _enemy.Rb.linearVelocity = -_enemy.transform.right * _enemy.KnockbackForce; // apply knockback force in the opposite direction of the enemy's facing direction
+        _enemy._enemyRb.linearVelocity = Vector2.zero; // stop movement
+        _enemy._enemyRb.linearVelocity = -_enemy.transform.right * _enemy.KnockbackForce; // apply knockback force in the opposite direction of the enemy's facing direction
         _enemy.isKnockbacked = true;
         yield return new WaitForSeconds(_enemy.KnockBackDuration); // wait for knockback duration
         _stateMachine.TransitionTo(new ChaseState(_enemy, _stateMachine)); // transition back to patrol state after knockback

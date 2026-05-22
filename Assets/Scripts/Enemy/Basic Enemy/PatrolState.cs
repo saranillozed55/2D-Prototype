@@ -44,11 +44,11 @@ public class PatrolState : IState
         Vector2 targetPos = _enemy.EnemyPath.wayPoints[_currentWayPointIndex].position;
 
         //horizontal direction only
-        float directionX = Mathf.Sign(targetPos.x - _enemy.Rb.position.x);
+        float directionX = Mathf.Sign(targetPos.x - _enemy._enemyRb.position.x);
 
-        _enemy.Rb.linearVelocity = new Vector2(directionX * _enemy.MoveSpeed, _enemy.Rb.linearVelocity.y);
+        _enemy._enemyRb.linearVelocity = new Vector2(directionX * _enemy.MoveSpeed, _enemy._enemyRb.linearVelocity.y);
 
-        if(Mathf.Abs(_enemy.Rb.position.x - targetPos.x) < 0.2f)
+        if(Mathf.Abs(_enemy._enemyRb.position.x - targetPos.x) < 0.2f)
         {
             _currentWayPointIndex = (_currentWayPointIndex + 1) % _enemy.EnemyPath.wayPoints.Count;
             _enemy.StartCoroutine(PatrolEdgePauseRoutine());
@@ -67,7 +67,7 @@ public class PatrolState : IState
     private IEnumerator PatrolEdgePauseRoutine()
     {
         _isWaiting = true;
-        _enemy.Rb.linearVelocity = Vector2.zero;
+        _enemy._enemyRb.linearVelocity = Vector2.zero;
         yield return new WaitForSeconds(edgePauseDuration);
         _isWaiting = false;
     }
@@ -75,7 +75,7 @@ public class PatrolState : IState
     private IEnumerator PlayerSpottedRoutine()
     {
         _enemy.NotifySpottedPlayer();
-        _enemy.Rb.linearVelocity = new Vector2(0, _enemy.Rb.linearVelocity.y);
+        _enemy._enemyRb.linearVelocity = new Vector2(0, _enemy._enemyRb.linearVelocity.y);
         yield return new WaitForSeconds(_enemySpottedPause);
         _stateMachine.TransitionTo(new ChaseState(_enemy, _stateMachine));
     }
