@@ -2,23 +2,22 @@
 using UnityEngine;
 using static UnityEngine.RuleTile.TilingRuleOutput;
 
-public class BatIdleState : IState
+public class BatIdleState : EnemyState<BatController>
 {
-    private BatController _batController;
-    private StateMachine _stateMachine;
+    //sending enemy and stateMachine to parent class
 
-    public BatIdleState(BatController batController, StateMachine stateMachine)
+    private static readonly int IsIdleHash = Animator.StringToHash("Bat_Idle_Anim");
+    public BatIdleState(BatController enemy, StateMachine stateMachine) : base(enemy, stateMachine)
     {
-        _batController = batController;
-        _stateMachine = stateMachine;
     }
 
-    public void Enter()
+    public override void Enter()
     {
         Debug.Log("Bat is currently in idle state");
+        enemy._animator.CrossFade(IsIdleHash, 0, 0);
     }
 
-    public void Update()
+    public override void Update()
     {
         DetectIdleRange();
         //TODO: Implement animations and sound
@@ -27,20 +26,20 @@ public class BatIdleState : IState
     private void DetectIdleRange()
     {
 
-        Vector3 direction = _batController.PlayerTransform.position - _batController.transform.position;
+        Vector3 direction = enemy.PlayerTransform.position - enemy.transform.position;
         float distance = direction.magnitude;
 
         //must include player in obstacle layers because that we are checking if we are hitting the player.
-        RaycastHit2D hit = Physics2D.Raycast(_batController.transform.position, direction.normalized, distance, _batController.ObstacleLayers);
+        RaycastHit2D hit = Physics2D.Raycast(enemy.transform.position, direction.normalized, distance, enemy.ObstacleLayers);
 
-        if (distance < _batController.IdleDetectRange && hit.collider != null && hit.transform == _batController.PlayerTransform)
+        if (distance < enemy.IdleDetectRange && hit.collider != null && hit.transform == enemy.PlayerTransform)
         {
             //Player is in range
-            _stateMachine.TransitionTo(new BatChaseState(_batController, _stateMachine));
+            stateMachine.TransitionTo(new BatChaseState(enemy, stateMachine));
         }
     }
 
-    public void Exit()
+    public override void Exit()
     {
         Debug.Log("Bat is leaving idle state");
     }

@@ -2,16 +2,14 @@ using UnityEngine;
 
 public class BatController : Enemy
 {
-    /*
-     * Enemy will be on the ceiling and will attack the player when it gets in range
-     */
 
-    //RigidBody
-    public Rigidbody2D _batRb;
 
-    [Header("Referneces")]
+    [Header("References")]
     [SerializeField] private BoxCollider2D _physicsCollider;
     [SerializeField] private BoxCollider2D _hurtCollider;
+    public Rigidbody2D _batRb;
+    public Animator _animator;
+
     
     [Header("Death Settings")]
     [SerializeField] private float deathTimer = 3f;
@@ -19,8 +17,10 @@ public class BatController : Enemy
     [Header("Idle Settings")]
     [SerializeField] private float _idleDetectRange = 10f;
 
-    [Header("Chase Settigns")]
+    [Header("Chase/Flying Settigns")]
     [SerializeField] private float _chaseRange = 15f;
+    [SerializeField] private float _floatingAmplitude = 1.5f; // how high we bob and up and down
+    [SerializeField] private float _floatFrequency = 5f; // how fast we bob up and down
 
     [Header("Gizmos")]
     [SerializeField] private bool _showLineToPlayer = false;
@@ -30,8 +30,13 @@ public class BatController : Enemy
     //move this to enemy if needed
     [Header("Raycast")]
     [SerializeField] private LayerMask obstacleLayers;
-    
+
+
+
     //IState Getters
+    public float MoveSpeed => moveSpeed;
+    public float FloatingAmplitude => _floatingAmplitude;
+    public float FloatingFrequency => _floatFrequency;
     public Transform PlayerTransform => playerTransform;
     public float ChaseRange => _chaseRange;
     public LayerMask ObstacleLayers => obstacleLayers;
@@ -39,16 +44,15 @@ public class BatController : Enemy
     
     private StateMachine _stateMachine;
     private BatIdleState _batIdleState;
-    private BatChaseState _batChaseState;
 
     private void Start()
     {
+        _batRb = GetComponent<Rigidbody2D>();
         _physicsCollider = GetComponent<BoxCollider2D>();
         _hurtCollider = GetComponentInChildren<BoxCollider2D>();
 
         _stateMachine = new StateMachine();
         _batIdleState = new BatIdleState(this, _stateMachine);
-        _batChaseState = new BatChaseState(this, _stateMachine);
 
         if (playerTransform == null) return;
         CheckIsDead();
@@ -64,14 +68,22 @@ public class BatController : Enemy
         _stateMachine.Update();
     }
 
+    public override void Hurt(int damage)
+    {
+        base.Hurt(damage);
+        _impulseSource.GenerateImpulse(Vector3.up * 0.05f);
+        HitStop.Instance.Stop(0.05f);
+
+    }
+
     private void OnDrawGizmosSelected()
     {
-        if(_showIdleRange)
+        if(_showIdleRange) 
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, _idleDetectRange);
         }
-        if(_showLineToPlayer)
+        if(_showLineToPlayer && playerTransform != null)
         {
             Gizmos.color = Color.red;
             Gizmos.DrawLine(transform.position, playerTransform.position);

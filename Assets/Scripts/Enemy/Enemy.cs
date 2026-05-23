@@ -35,6 +35,12 @@ public class Enemy : Breakable
         playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         _impulseSource = GetComponent<CinemachineImpulseSource>();
     }
+
+    /*
+     *  Move knockback into here 
+     */
+
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isDead) return;
