@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Cinemachine;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -6,68 +7,154 @@ using UnityEngine;
 public class Enemy : Breakable
 {
     //protected Animator animator;
-    protected int playerLayer;
-    protected Transform playerTransform;
-    protected Rigidbody2D _rb;
-
-    [Header("Chase Settings")]
-    [SerializeField] protected float stopChaseRange;
+    public Rigidbody2D _rb;
+    protected int _playerLayer;
+    protected Transform _playerTransform;
+    protected BoxCollider2D _boxPhysicsCollider;
+    protected bool _isFacingRight;
 
     [Header("Move Settings")]
-    [SerializeField] protected float moveSpeed;
+    [SerializeField] protected float _moveSpeed; // don't have move speed here have it on ground enemy and make it so that air enemies have air speed instead(better naming)
 
     [Header("Damage")]
-    [SerializeField] protected int damage;
+    [SerializeField] protected int _damage;
 
-    [Header("Knockback Force")]
+    [Header("Death Settings")]
+    [SerializeField] protected float _deathTimer = 2f;
+
+    [Header("Knockback Settings")]
     [SerializeField] protected bool canBeKnockbacked = true;
     [SerializeField] protected float knockbackForce = 5f;
     [SerializeField] protected float knockbackDuration = 0.5f;
     public bool isKnockbacked = false;
+    protected bool isHurt = false;
+
+    [Header("Search")]
+    protected Vector2 _lastSeenPosition;
+    protected bool _hasLastSeenPosition;
 
     [Header("Camera Impulse")]
     [SerializeField] protected CinemachineImpulseSource _impulseSource;
 
-    private void Awake()
+    //State machine reference
+    protected StateMachine _stateMachine;
+
+    protected override void Awake()
     {
+        base.Awake();
         _rb = GetComponent<Rigidbody2D>();
-        playerLayer = LayerMask.NameToLayer("Player");
-        playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
+        _boxPhysicsCollider = GetComponent<BoxCollider2D>();
+        _playerLayer = LayerMask.NameToLayer("Player");
+        _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         _impulseSource = GetComponent<CinemachineImpulseSource>();
     }
+    protected virtual void Start()
+    {
+        _stateMachine = new StateMachine();
+    }
 
-    /*
-     *  Move knockback into here 
-     */
+    public override void Hurt(int damage, Vector2 hitDirection)
+    {
+        base.Hurt(damage, hitDirection);
 
+        //sample impulse
+        //Impulse/Camera shake here using OnHurt
+
+        _impulseSource.GenerateImpulse(Vector3.up * 0.1f);
+        HitStop.Instance.Stop(0.05f);
+
+        if(!isHurt && canBeKnockbacked)
+        {
+            //direction from player to enemy (away from hit source)
+            Vector2 knockbackDir = ((Vector2)transform.position - hitDirection).normalized;
+            StartCoroutine(KnockbackRoutine(knockbackDir));
+        }
+    }
+
+    protected override void Dead()
+    {
+        if (isDead) return;
+        base.Dead();
+        _rb.linearVelocity = Vector2.zero;
+        _rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+        gameObject.layer = LayerMask.NameToLayer("DeadEnemy");
+        StartCoroutine(EnemyDeathRoutine());
+    }
+
+    protected virtual IEnumerator EnemyDeathRoutine()
+    {
+        yield return new WaitForSeconds(_deathTimer);
+        Destroy(gameObject);
+    }
+
+    protected virtual IEnumerator KnockbackRoutine(Vector2 attackerPosition)
+    {
+        isKnockbacked = true;
+        isHurt = true;
+        _rb.linearVelocity = attackerPosition.normalized * knockbackForce;
+        yield return new WaitForSeconds(0.2f);
+        _rb.linearVelocity = Vector2.zero;
+        isKnockbacked = false;
+        isHurt = false;
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (isDead) return;
 
-        if (collision.gameObject.layer == playerLayer)
+        if (collision.gameObject.layer == _playerLayer)
         {
             var playerData = collision.gameObject.GetComponentInParent<PlayerData>();
             var playerController = collision.gameObject.GetComponentInParent<PlayerController>();
             if (!playerController.IsInvincible)
             {
-                playerData.LoseHealth(damage,transform.position);
+                playerData.LoseHealth(_damage,transform.position);
             }
         }
     }
 
-    private void OnDrawGizmosSelected()
+    public void UpdateLastKnowPosition(Vector2 position)
     {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, stopChaseRange);
+        _lastSeenPosition = position;
+        _hasLastSeenPosition = true;
+    }
+
+    public void ClearLastKnowPosition()
+    {
+        _hasLastSeenPosition = false;
     }
 
     protected virtual void HandleTurn()
     {
-        if(Mathf.Abs(_rb.linearVelocity.x) > 0.1f)
+        if (isKnockbacked)
         {
-            float angle = _rb.linearVelocity.x > 0 ? 0 : 180f;
+            return;
+        }
+        if (Mathf.Abs(_rb.linearVelocity.x) > 0.1f)
+        {
+            float angle;
+            if(_rb.linearVelocity.x > 0)
+            {
+                angle = 0;
+                _isFacingRight = true;
+            }
+            else
+            {
+                angle = 180f;
+                _isFacingRight = false;
+            }
+
             transform.rotation = Quaternion.Euler(0, angle, 0);
+        }
+        else //updates which direction its facing based on where the player is.
+        {
+            bool playerIsRight = _playerTransform.position.x > transform.position.x;
+            if(playerIsRight != _isFacingRight)
+            {
+                _isFacingRight = playerIsRight;
+                float angle = _isFacingRight ? 0 : 180f;
+                transform.rotation = Quaternion.Euler(0, angle, 0);
+            }
         }
     }
 }

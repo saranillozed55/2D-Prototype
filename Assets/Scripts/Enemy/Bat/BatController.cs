@@ -2,17 +2,11 @@ using UnityEngine;
 
 public class BatController : Enemy
 {
-
-
     [Header("References")]
     [SerializeField] private BoxCollider2D _physicsCollider;
     [SerializeField] private BoxCollider2D _hurtCollider;
     public Rigidbody2D _batRb;
     public Animator _animator;
-
-    
-    [Header("Death Settings")]
-    [SerializeField] private float deathTimer = 3f;
 
     [Header("Idle Settings")]
     [SerializeField] private float _idleDetectRange = 10f;
@@ -31,22 +25,26 @@ public class BatController : Enemy
     [Header("Raycast")]
     [SerializeField] private LayerMask obstacleLayers;
 
-
-
     //IState Getters
-    public float MoveSpeed => moveSpeed;
+    public float MoveSpeed => _moveSpeed;
     public float FloatingAmplitude => _floatingAmplitude;
     public float FloatingFrequency => _floatFrequency;
-    public Transform PlayerTransform => playerTransform;
+    public Transform PlayerTransform => _playerTransform;
     public float ChaseRange => _chaseRange;
     public LayerMask ObstacleLayers => obstacleLayers;
     public float IdleDetectRange => _idleDetectRange;
+    public float DeathTimer => _deathTimer;
     
-    private StateMachine _stateMachine;
     private BatIdleState _batIdleState;
 
-    private void Start()
+    protected override void Awake()
     {
+        base.Awake();
+    }
+
+    protected override void Start()
+    {
+        base.Start();
         _batRb = GetComponent<Rigidbody2D>();
         _physicsCollider = GetComponent<BoxCollider2D>();
         _hurtCollider = GetComponentInChildren<BoxCollider2D>();
@@ -54,44 +52,36 @@ public class BatController : Enemy
         _stateMachine = new StateMachine();
         _batIdleState = new BatIdleState(this, _stateMachine);
 
-        if (playerTransform == null) return;
-        CheckIsDead();
         _stateMachine.Initialize(_batIdleState);
     }
 
-    private void Update()
+    private void OnDisable()
     {
-        CheckIsDead();
+        StopAllCoroutines();
     }
+
     private void FixedUpdate()
     {
+        if (isKnockbacked || isDead) return;
         _stateMachine.Update();
     }
 
-    public override void Hurt(int damage)
-    {
-        base.Hurt(damage);
-        _impulseSource.GenerateImpulse(Vector3.up * 0.05f);
-        HitStop.Instance.Stop(0.05f);
-
-    }
-
-    private void OnDrawGizmosSelected()
-    {
-        if(_showIdleRange) 
-        {
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(transform.position, _idleDetectRange);
-        }
-        if(_showLineToPlayer && playerTransform != null)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(transform.position, playerTransform.position);
-        }
-        if(_showChaseRange)
-        {
-            Gizmos.color = Color.blue;
-            Gizmos.DrawWireSphere(transform.position, _chaseRange);
-        }
-    }
+    //private void OnDrawGizmosSelected()
+    //{
+    //    if(_showIdleRange) 
+    //    {
+    //        Gizmos.color = Color.yellow;
+    //        Gizmos.DrawWireSphere(transform.position, _idleDetectRange);
+    //    }
+    //    if(_showLineToPlayer && playerTransform != null)
+    //    {
+    //        Gizmos.color = Color.red;
+    //        Gizmos.DrawLine(transform.position, playerTransform.position);
+    //    }
+    //    if(_showChaseRange)
+    //    {
+    //        Gizmos.color = Color.blue;
+    //        Gizmos.DrawWireSphere(transform.position, _chaseRange);
+    //    }
+    //}
 }

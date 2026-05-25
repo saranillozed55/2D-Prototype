@@ -53,6 +53,7 @@ public class PlayerData : MonoBehaviour
         _onPlayerKill.OnEventRaised -= CheatKillPlayer;
         _onPlayerInvincibleCheat.OnEventRaised -= CheatPlayerInvincible;
         _onPlayerInfiniteHealth.OnEventRaised -= CheatInfiniteHealth;
+        StopAllCoroutines();
 
     }
 

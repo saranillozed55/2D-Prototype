@@ -8,15 +8,14 @@ public class Breakable : MonoBehaviour
     [SerializeField] protected bool isDead;
 
     public event Action OnDeath;
-    protected void CheckIsDead()
-    {
-        if(health <= 0 && !isDead)
-        {
-            Debug.Log("Breakable Runs Check Death");
-            Dead();
-        }
-    }
 
+    public int Health => health;
+    public int MaxHealth { get; private set;} // use for reviving, health caps, and health bars
+
+    protected virtual void Awake()
+    {
+        MaxHealth = health;
+    }
 
     protected virtual void Dead()
     {
@@ -24,11 +23,17 @@ public class Breakable : MonoBehaviour
         OnDeath?.Invoke();
     }
 
-    public virtual void Hurt(int damage)
+    public virtual void Hurt(int damage, Vector2 hitDirection)
     {
         if (isDead) return;
         health -= damage;
+        OnHurt();
         if (health <= 0) Dead();
+    }
+
+    protected virtual void OnHurt()
+    {
+        //implement specific code here
     }
    
 }

@@ -1,10 +1,8 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class CoinPool : MonoBehaviour
+public class CoinPool : GenericSingleton<CoinPool>
 {
-    public static CoinPool Instance;
-
     [SerializeField] private GameObject coinPrefab;
     [SerializeField] private int defaultCapacity = 10;
     [SerializeField] private int maxSize = 50;
@@ -12,11 +10,9 @@ public class CoinPool : MonoBehaviour
 
     private ObjectPool<GameObject> pool;
 
-    private void Awake()
+    protected override void Awake()
     {
-        if(Instance == null)
-            Instance = this;
-
+        base.Awake();
         pool = new ObjectPool<GameObject>(createFunc: CreateCoin,
             actionOnGet: OnGetCoin,
             actionOnRelease: OnReleaseCoin,
@@ -24,6 +20,11 @@ public class CoinPool : MonoBehaviour
             defaultCapacity: defaultCapacity,
             maxSize: maxSize
             );
+    }
+
+    private void OnDisable()
+    {
+        pool?.Clear();
     }
 
     /*
@@ -65,9 +66,16 @@ public class CoinPool : MonoBehaviour
      * 
      * Called when pool exceeds maxSize and needs to discard a coin entirely
      */
-    private void OnDestroyCoin(GameObject coin) 
+    private void OnDestroyCoin(GameObject coin)
     {
-        Destroy(coin);
+        if (Application.isPlaying)
+        {
+            Destroy(coin);
+        }
+        else
+        {
+            DestroyImmediate(coin);
+        }
     }
 
     /*

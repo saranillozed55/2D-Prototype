@@ -17,7 +17,7 @@ public class AttackTriggerCheck : MonoBehaviour
             var breakable = collision.GetComponent<Breakable>();
             if (breakable != null)
             {
-                breakable.Hurt(5); // Change this value to not be a magic number
+                breakable.Hurt(5, transform.position); // Change this value to not be a magic number
             }
             else
             {

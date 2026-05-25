@@ -30,18 +30,14 @@ public class Coin : CollectableBase
         //rotate coin
         transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
     }
-
-    protected override void OnTriggerEnter2D(Collider2D collider)
+    public void Collect(Collider2D collider)
     {
-        if (collider.CompareTag("Player"))
-        {
-            base.OnTriggerEnter2D(collider);
-            CurrencyManager.Instance.AddCoins(numCoinsInStack);
-            AudioSource.PlayClipAtPoint(sound, transform.position); // play sound at world position
-            StopAllCoroutines(); // stop despawn/flash timer
-            spriteRenderer.enabled = true; // reset in case it was flashing
-            objectPool.Release(gameObject);
-        }
+        base.OnTriggerEnter2D(collider);
+        CurrencyManager.Instance.AddCoins(numCoinsInStack);
+        AudioSource.PlayClipAtPoint(sound, transform.position);
+        StopAllCoroutines();
+        spriteRenderer.enabled = true;
+        objectPool.Release(gameObject);
     }
 
     private void Deactivate()

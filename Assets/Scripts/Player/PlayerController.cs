@@ -6,6 +6,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+//[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] on static variables - force global variables bakc to their default values before the scene starts
 public class PlayerController : MonoBehaviour
 {
     //move this onto a different script and just access the state there PlayerStateHandler
@@ -163,6 +164,7 @@ public class PlayerController : MonoBehaviour
         GameManager.OnGameStateChanged -= HandleGameStateChanged;
         _onPlayerDeath.OnEventRaised -= HandlePlayerDeath;
         _onPlayerRespawn.OnEventRaised -= HandlePlayerRespawning;
+        StopAllCoroutines();
 
     }
 
