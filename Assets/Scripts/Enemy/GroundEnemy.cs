@@ -1,11 +1,16 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class GroundEnemy : Enemy
 {
-    [Header("WayPoints")]
+    [Header("WayPoints/Patrol")]
     [SerializeField] protected PatrolPath _enemyPath;
+    [SerializeField] protected float _edgePauseDuration = 2f;
+    [SerializeField] protected float _enemySpottedPause = 1f;
+    public int _currentWayPointIndex = 0;
+    public bool _atPatrolEdge = false;
 
     [Header("Ledge Detection")]
     [SerializeField] protected float _groundCheckRadius = 0.2f;
@@ -82,7 +87,7 @@ public class GroundEnemy : Enemy
 
     private void ClampFallSpeed()
     {
-        if (_rb.linearVelocity.y >= -_maxFallSpeed)
+        if (_rb.linearVelocity.y < -_maxFallSpeed)
         {
             _rb.linearVelocity = new Vector2(_rb.linearVelocity.x, _maxFallSpeed);
         }
@@ -183,4 +188,6 @@ public class GroundEnemy : Enemy
     public int PlayerLayer => _playerLayer;
     public Vector2 LastSeenPosition => _lastSeenPosition;
     public bool HasLastSeenPosition => _hasLastSeenPosition;
+    public float EdgePauseDuration => _edgePauseDuration;
+    public float EnemySpottedPause => _enemySpottedPause;
 }

@@ -6,7 +6,6 @@ public class BatController : Enemy
     [SerializeField] private BoxCollider2D _physicsCollider;
     [SerializeField] private BoxCollider2D _hurtCollider;
     public Rigidbody2D _batRb;
-    public Animator _animator;
 
     [Header("Idle Settings")]
     [SerializeField] private float _idleDetectRange = 10f;
@@ -34,7 +33,9 @@ public class BatController : Enemy
     public LayerMask ObstacleLayers => obstacleLayers;
     public float IdleDetectRange => _idleDetectRange;
     public float DeathTimer => _deathTimer;
-    
+
+    public Animator Animator => _animator;
+
     private BatIdleState _batIdleState;
 
     protected override void Awake()

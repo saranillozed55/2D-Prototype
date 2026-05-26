@@ -12,6 +12,7 @@ public class Enemy : Breakable
     protected Transform _playerTransform;
     protected BoxCollider2D _boxPhysicsCollider;
     protected bool _isFacingRight;
+    public Animator _animator;
 
     [Header("Move Settings")]
     [SerializeField] protected float _moveSpeed; // don't have move speed here have it on ground enemy and make it so that air enemies have air speed instead(better naming)
@@ -43,6 +44,7 @@ public class Enemy : Breakable
     {
         base.Awake();
         _rb = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
         _boxPhysicsCollider = GetComponent<BoxCollider2D>();
         _playerLayer = LayerMask.NameToLayer("Player");
         _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
