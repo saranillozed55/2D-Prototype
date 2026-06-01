@@ -5,6 +5,7 @@ public abstract class GenericSingleton<T> : MonoBehaviour where T : MonoBehaviou
     #region Properties:
 
     public static T Instance { get; private set; }
+
     #endregion
 
 
@@ -24,7 +25,7 @@ public abstract class GenericSingleton<T> : MonoBehaviour where T : MonoBehaviou
             return;
         }
         Instance = this as T;
-        //DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject); // must be on a root gameobject
     }
     #endregion
 }

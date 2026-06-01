@@ -35,7 +35,7 @@ public class TestEnemy : GroundEnemy
         //if alerting or chasing, face the player directly
         if (_stateMachine.CurrentState is ChaseState)
         {
-            float directionToPlayer = _playerTransform.position.x - transform.position.x;
+            float directionToPlayer = _playerTransform.position.x - transform.position.x; //13-18
 
             _isFacingRight = directionToPlayer > 0;
 

@@ -1,85 +1,83 @@
-using System.Collections;
-using UnityEngine;
+//using System.Collections;
+//using UnityEngine;
 
-public class GroundEnemyPatrolState<T> : EnemyState<T> where T: GroundEnemy
-{
-    private bool _isWaiting = false;
-    private bool _isSpotting = false;
+//public class GroundEnemyPatrolState<T> : EnemyState<T> where T : GroundEnemy
+//{
+//    private bool _isWaiting = false;
+//    private bool _isSpotting = false;
+//    public GroundEnemyPatrolState(T enemy, StateMachine stateMachine) : base(enemy, stateMachine) { }
 
-    public GroundEnemyPatrolState(T enemy, StateMachine stateMachine) : base(enemy, stateMachine) { }
 
-    protected virtual void OnEnterAnimation() { }
-    protected virtual void OnExitAnimation() { }
-    protected virtual void OnIdleAnimation() { }
-    protected virtual void OnWalkAnimations() { }
-    protected virtual void OnSpottedAnimations() { }
-    public override void Enter()
-    {
-        _isWaiting = false;
-        _isSpotting = false;
-        OnEnterAnimation();
-    }
+//    protected virtual int IsMovingHash() => 0;
 
-    public override void Update()
-    {
-        Patrol();
-        CheckCone();
-    }
+//    public override void Enter()
+//    {
+//        _isWaiting = false;
+//        _isSpotting = false;
+//        enemy._animator.SetBool(IsMovingHash(), true);
+//    }
 
-    public override void Exit()
-    {
-        OnExitAnimation();
-    }
+//    public override void Update()
+//    {
+//        Patrol();
+//        CheckCone();
+//    }
 
-    private void Patrol()
-    {
-        if (enemy.EnemyPath.wayPoints.Count == 0 || _isWaiting)
-        {
-            return;
-        }
+//    public override void Exit()
+//    {
+//        Debug.Log("Ground Enemy has left patrol state");
+//    }
 
-        Vector2 targetPos = enemy.EnemyPath.wayPoints[enemy._currentWayPointIndex].position;
+//    private void Patrol()
+//    {
+//        if (enemy.EnemyPath.wayPoints.Count == 0 || _isWaiting || _isSpotting)
+//        {
+//            return;
+//        }
 
-        //move in horizontal direction only
-        float directionX = Mathf.Sign(targetPos.x - enemy._rb.position.x);
+//        Vector2 targetPos = enemy.EnemyPath.wayPoints[enemy._currentWayPointIndex].position;
 
-        enemy._rb.linearVelocity = new Vector2(directionX * enemy.MoveSpeed, enemy._rb.linearVelocity.y);
+//        //move in horizontal direction only
+//        float directionX = Mathf.Sign(targetPos.x - enemy._rb.position.x);
 
-        if (Mathf.Abs(targetPos.x - enemy._rb.position.x) < 0.2f)
-        {
-            enemy._currentWayPointIndex = (enemy._currentWayPointIndex + 1) % enemy.EnemyPath.wayPoints.Count;
-            enemy.StartCoroutine(PauseRoutine());
-        }
-    }
-    private void CheckCone()
-    {
-        if (_isSpotting || !enemy.IsTargetInCone()) return;
-        _isSpotting = true;
-        enemy.StartCoroutine(SpottedRoutine());
-    }
-    private IEnumerator PauseRoutine()
-    {
-        _isWaiting = true;
-        enemy._rb.linearVelocity = Vector2.zero; // can cause problems if enemy is on moving platform
-        OnIdleAnimation();
-        yield return new WaitForSeconds(enemy.EdgePauseDuration);
-        OnWalkAnimations();
-        _isWaiting = false;
-    }
+//        enemy._rb.linearVelocity = new Vector2(directionX * enemy.MoveSpeed, enemy._rb.linearVelocity.y);
 
-    private IEnumerator SpottedRoutine()
-    {
-        enemy.NotifySpottedPlayer();
-        enemy._rb.linearVelocity = new Vector2(0, enemy._rb.linearVelocity.y);
-        OnSpottedAnimations();
-        yield return new WaitForSeconds(enemy.EnemySpottedPause);
+//        if (Mathf.Abs(targetPos.x - enemy._rb.position.x) < 0.2f)
+//        {
+//            enemy._currentWayPointIndex = (enemy._currentWayPointIndex + 1) % enemy.EnemyPath.wayPoints.Count;
+//            enemy.StartCoroutine(PauseRoutine());
+//        }
+//    }
+//    private void CheckCone()
+//    {
+//        if (_isSpotting || !enemy.IsTargetInCone()) return;
+//        _isSpotting = true;
+//        enemy.StartCoroutine(SpottedRoutine());
+//    }
+//    private IEnumerator PauseRoutine()
+//    {
+//        _isWaiting = true;
+//        enemy._rb.linearVelocity = Vector2.zero; // can cause problems if enemy is on moving platform
+//        enemy._animator.SetBool(IsMovingHash(), false);
+//        yield return new WaitForSeconds(enemy.EdgePauseDuration);
+//        enemy._animator.SetBool(IsMovingHash(), true);
+//        _isWaiting = false;
+//    }
 
-        var chaseState = GetChaseState();
-        if(chaseState != null)
-        {
-            stateMachine.TransitionTo(chaseState);
-        }
-    }
-    protected virtual EnemyState<T> GetChaseState() => null;
+//    private IEnumerator SpottedRoutine()
+//    {
+//        enemy.NotifySpottedPlayer();
+//        enemy._rb.linearVelocity = new Vector2(0, enemy._rb.linearVelocity.y);
+//        enemy._animator.SetBool(IsMovingHash(), false);
+//        yield return new WaitForSeconds(enemy.EnemySpottedPause);
 
-}
+//        var chaseState = GetChaseState();
+//        Debug.Log(chaseState.ToString());
+//        if(chaseState != null)
+//        {
+//            stateMachine.TransitionTo(chaseState);
+//        }
+//    }
+//    protected virtual EnemyState<T> GetChaseState() => null;
+
+//}

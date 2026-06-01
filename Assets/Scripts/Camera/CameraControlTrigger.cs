@@ -36,7 +36,7 @@ public class CameraControlTrigger : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            Vector2 exitDirection = (collision.transform.position - _collider.bounds.center).normalized;
+            Vector2 exitDirection = (collision.transform.position - _collider.bounds.center).normalized; // If the x value is positive, they exited to the right, if x is negative then they exited left
             if (customInspectorObjects.swapCameras && customInspectorObjects.cameraOnLeft != null && customInspectorObjects != null)
             {
                 //swap cameras

@@ -13,7 +13,8 @@ public class PlayerInputHandler : MonoBehaviour
     public event Action OnAttack;
     public event Action OnDash;
     public static event Action OnMenu;
-
+    public event Action OnSave;
+    public event Action OnLoad;
 
     private readonly HashSet<object> _locks = new();
     private void Start()
@@ -32,6 +33,10 @@ public class PlayerInputHandler : MonoBehaviour
             InputManager.InputControl.Player.Dash.performed += OnDashPerformed;
             InputManager.InputControl.Player.Attack.performed += OnAttackPerformed;
 
+            InputManager.InputControl.Player.Save.performed += OnSavePerformed;
+            InputManager.InputControl.Player.Load.performed += OnLoadPerformed;
+
+
             InputManager.InputControl.UI.Back.performed += OnBackPerformed;
         }
     }
@@ -46,6 +51,9 @@ public class PlayerInputHandler : MonoBehaviour
             InputManager.InputControl.Player.Dash.performed -= OnDashPerformed;
             InputManager.InputControl.Player.Attack.performed -= OnAttackPerformed;
 
+            InputManager.InputControl.Player.Save.performed -= OnSavePerformed;
+            InputManager.InputControl.Player.Load.performed -= OnLoadPerformed;
+
 
             InputManager.InputControl.UI.Back.performed -= OnBackPerformed;
 
@@ -56,6 +64,10 @@ public class PlayerInputHandler : MonoBehaviour
     {
         MoveValue = InputManager.InputControl.Player.Move.ReadValue<Vector2>();
     }
+
+
+    private void OnSavePerformed(InputAction.CallbackContext ctx) => OnSave?.Invoke();
+    private void OnLoadPerformed(InputAction.CallbackContext ctx) => OnLoad?.Invoke();
 
     private void OnAttackPerformed(InputAction.CallbackContext ctx)
     {

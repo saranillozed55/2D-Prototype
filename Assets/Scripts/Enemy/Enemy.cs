@@ -12,7 +12,12 @@ public class Enemy : Breakable
     protected Transform _playerTransform;
     protected BoxCollider2D _boxPhysicsCollider;
     protected bool _isFacingRight;
+    protected CameraShakeSource _cameraShakeSource;
     public Animator _animator;
+
+    private DamageFlash _damageFlash;
+
+    public bool IsChasing { get; set; }
 
     [Header("Move Settings")]
     [SerializeField] protected float _moveSpeed; // don't have move speed here have it on ground enemy and make it so that air enemies have air speed instead(better naming)
@@ -49,6 +54,8 @@ public class Enemy : Breakable
         _playerLayer = LayerMask.NameToLayer("Player");
         _playerTransform = GameObject.FindGameObjectWithTag("Player").transform;
         _impulseSource = GetComponent<CinemachineImpulseSource>();
+        _damageFlash = GetComponent<DamageFlash>();
+        _cameraShakeSource = GetComponent<CameraShakeSource>();
     }
     protected virtual void Start()
     {
@@ -62,15 +69,16 @@ public class Enemy : Breakable
         //sample impulse
         //Impulse/Camera shake here using OnHurt
 
-        _impulseSource.GenerateImpulse(Vector3.up * 0.1f);
+        _cameraShakeSource.ShakeCamera(0.1f, Vector3.up);
         HitStop.Instance.Stop(0.05f);
 
-        if(!isHurt && canBeKnockbacked)
+        if (!isHurt && canBeKnockbacked)
         {
             //direction from player to enemy (away from hit source)
             Vector2 knockbackDir = ((Vector2)transform.position - hitDirection).normalized;
             StartCoroutine(KnockbackRoutine(knockbackDir));
         }
+        _damageFlash.CallDamageFlash();
     }
 
     protected override void Dead()
@@ -148,7 +156,7 @@ public class Enemy : Breakable
 
             transform.rotation = Quaternion.Euler(0, angle, 0);
         }
-        else //updates which direction its facing based on where the player is.
+        else if(!IsChasing) // dont snap-face player while actively chasing
         {
             bool playerIsRight = _playerTransform.position.x > transform.position.x;
             if(playerIsRight != _isFacingRight)

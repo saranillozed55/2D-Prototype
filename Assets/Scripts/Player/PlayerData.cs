@@ -78,7 +78,7 @@ public class PlayerData : MonoBehaviour
         }
     }
 
-    public void LoseHealth(int health,Vector2 enemyPosition)
+    public void LoseHealth(int health, Vector2 enemyPosition)
     {
         if (isDead || playerController.IsInvincible) return;
         this.health -= health;
@@ -150,6 +150,17 @@ public class PlayerData : MonoBehaviour
         {
             health = int.MaxValue;
         }
+    }
+
+    //Save and Load Testing
+    public Vector3 GetPlayerPosition()
+    {
+        return transform.position;
+    }
+
+    public void SetPlayerPosition(Vector3 position)
+    {
+        transform.position = position;
     }
 
 }

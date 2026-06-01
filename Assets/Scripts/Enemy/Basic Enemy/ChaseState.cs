@@ -31,7 +31,7 @@ public class ChaseState : EnemyState<TestEnemy>
 
     private void ChasePLayer()
     {
-        if (enemy.EdgeFrontDetected || enemy.WallDetected) // maybe move this logic to somewhere else if we want the AI to move without patrol points
+        if (enemy.EdgeDetected || enemy.WallDetected) // maybe move this logic to somewhere else if we want the AI to move without patrol points
         {
             enemy._rb.linearVelocity = new Vector2(0, enemy._rb.linearVelocity.y);
             if(!enemy.HasLastSeenPosition)
@@ -39,7 +39,7 @@ public class ChaseState : EnemyState<TestEnemy>
                 enemy.UpdateLastKnowPosition(enemy.PlayerLocation.position);
             }
 
-            Debug.Log($"Ledge detect: {enemy.EdgeFrontDetected}, Wall detect: {enemy.WallDetected}");
+            Debug.Log($"Ledge detect: {enemy.EdgeDetected}, Wall detect: {enemy.WallDetected}");
             return; // stop moving but still have the last seen position
         }
         if (enemy.HasLastSeenPosition)

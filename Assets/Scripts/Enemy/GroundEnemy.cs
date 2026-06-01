@@ -43,6 +43,12 @@ public class GroundEnemy : Enemy
     [SerializeField] private float _stopChaseRange = 5f;
     [SerializeField] private float loseAggroRange = 10f;
 
+    [Header("Search")]
+    [SerializeField] private float _searchDuration = 2f;
+
+    [Header("Attack settings")]
+    [SerializeField] protected float _attackRange = 0.7f;
+
     public event Action OnSpottedPlayer;
 
     protected virtual void Update()
@@ -145,7 +151,7 @@ public class GroundEnemy : Enemy
         _wallDetected = hit.collider != null;
     }
 
-    private bool CheckGrounded()
+    public bool CheckGrounded()
     {
         Vector2 origin = new Vector2(_boxPhysicsCollider.bounds.center.x, _boxPhysicsCollider.bounds.min.y);
 
@@ -183,11 +189,15 @@ public class GroundEnemy : Enemy
     public float DeathTimer => _deathTimer;
     public float KnockbackForce => knockbackForce;
     public float KnockBackDuration => knockbackDuration;
-    public bool EdgeFrontDetected => _fEdgeDetected;
+    public bool EdgeDetected => _fEdgeDetected;
     public bool WallDetected => _wallDetected;
     public int PlayerLayer => _playerLayer;
     public Vector2 LastSeenPosition => _lastSeenPosition;
     public bool HasLastSeenPosition => _hasLastSeenPosition;
     public float EdgePauseDuration => _edgePauseDuration;
     public float EnemySpottedPause => _enemySpottedPause;
+    public bool IsGrounded => _isGrounded;
+    public float AttackRange => _attackRange;
+    public float SearchDuration => _searchDuration;
+    public LayerMask ObstacleLayer => _obstacleLayerMask;
 }
