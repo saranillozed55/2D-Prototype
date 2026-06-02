@@ -16,4 +16,6 @@ public class NecromancerAttackTrigger : MonoBehaviour
     {
         _boss.OnAttackHit(collision);
     }
+
+
 }

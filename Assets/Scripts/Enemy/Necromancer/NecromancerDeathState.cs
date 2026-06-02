@@ -6,7 +6,7 @@ public class NecromancerDeathState : EnemyState<NecromancerBoss>
     private float _deathDuration;
     public NecromancerDeathState(NecromancerBoss enemy, StateMachine stateMachine) : base(enemy, stateMachine)
     {
-        _deathDuration = 5f; // Set the duration for the death animation
+        _deathDuration = 5f; // Set the duration for the death animation - can look at the animator and see the length of the death animation
     }
     public override void Enter()
     {

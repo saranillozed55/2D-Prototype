@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerData : MonoBehaviour
 {
@@ -26,6 +27,7 @@ public class PlayerData : MonoBehaviour
 
     [SerializeField] private PlayerInputHandler inputHandler;
 
+    private GameObject _spawnPoint;
 
     private PlayerController playerController;
 
@@ -37,6 +39,8 @@ public class PlayerData : MonoBehaviour
         health = _playerDataSO.health;
         isDead = false;
         respawnTime = _playerDataSO.playerRespawnTime;
+        _spawnPoint = GameObject.FindWithTag("SpawnPoint");
+        DontDestroyOnLoad(gameObject);
     }
 
     private void OnEnable()
@@ -45,6 +49,7 @@ public class PlayerData : MonoBehaviour
         _onPlayerKill.OnEventRaised += CheatKillPlayer;
         _onPlayerInvincibleCheat.OnEventRaised += CheatPlayerInvincible;
         _onPlayerInfiniteHealth.OnEventRaised += CheatInfiniteHealth;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDisable()
@@ -53,8 +58,8 @@ public class PlayerData : MonoBehaviour
         _onPlayerKill.OnEventRaised -= CheatKillPlayer;
         _onPlayerInvincibleCheat.OnEventRaised -= CheatPlayerInvincible;
         _onPlayerInfiniteHealth.OnEventRaised -= CheatInfiniteHealth;
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         StopAllCoroutines();
-
     }
 
     private void Update()
@@ -120,7 +125,7 @@ public class PlayerData : MonoBehaviour
 
         isDead = false;
         ResetPlayer();
-
+        transform.position = _spawnPoint.transform.position;
         _onPlayerRespawn.RaiseEvent();
     }
 
@@ -161,6 +166,13 @@ public class PlayerData : MonoBehaviour
     public void SetPlayerPosition(Vector3 position)
     {
         transform.position = position;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        GameObject spawnPoint = GameObject.FindWithTag("SpawnPoint");
+        if (spawnPoint != null)
+            transform.position = spawnPoint.transform.position;
     }
 
 }

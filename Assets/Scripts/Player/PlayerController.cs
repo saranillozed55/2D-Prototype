@@ -1,10 +1,7 @@
 using System;
 using System.Collections;
 using Unity.Cinemachine;
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 //[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)] on static variables - force global variables bakc to their default values before the scene starts
 public class PlayerController : MonoBehaviour
@@ -32,8 +29,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 12f; // amount of jump force
     [SerializeField] private float jumpCutMultiplier = 0.5f; // quick jump and long jump
     [SerializeField] private int jumpLeft; //jump and double jump
-    [SerializeField] private int maxJumpLeft = 1;
-    private bool hasDoubleJump = false;
+    [SerializeField] private int maxJumpLeft = 2;
+    private bool hasDoubleJump = true;
 
     [Header("Coyote Time")]
     [SerializeField] private float coyoteTime = 0.15f; //max allowed time for grace period

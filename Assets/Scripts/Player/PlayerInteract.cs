@@ -38,7 +38,7 @@ public class PlayerInteract : MonoBehaviour
         if (interactable != null)
         {
             currentInteractable = interactable;
-            //Debug.Log("Interactable in range");
+            Debug.Log("Interactable in range");
         }
     }
     private void OnTriggerExit2D(Collider2D other)
@@ -48,7 +48,7 @@ public class PlayerInteract : MonoBehaviour
         if (interactable != null && interactable == currentInteractable)
         {
             currentInteractable = null;
-            //Debug.Log("Left Interctable Range");
+            Debug.Log("Left Interctable Range");
         }
     }
 

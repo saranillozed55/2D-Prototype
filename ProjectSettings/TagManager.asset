@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 3
   tags:
   - Breakable
+  - SpawnPoint
+  - NoYCam
+  - OpenRoomCam
+  - BossCam
   layers:
   - Default
   - TransparentFX

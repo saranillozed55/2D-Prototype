@@ -1,9 +1,5 @@
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UIElements;
-using UnityEngine.WSA;
 
 /*
  * ShopKeeper should only hold what is needed. Their inventory, dialogue, and send events. 

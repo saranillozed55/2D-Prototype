@@ -24,6 +24,8 @@ public class BatController : Enemy
     [Header("Raycast")]
     [SerializeField] private LayerMask obstacleLayers;
 
+    public static readonly int IsDeadHash = Animator.StringToHash("IsDead");
+
     //IState Getters
     public float MoveSpeed => _moveSpeed;
     public float FloatingAmplitude => _floatingAmplitude;
@@ -43,6 +45,18 @@ public class BatController : Enemy
         base.Awake();
     }
 
+    private void OnEnable()
+    {
+        OnDeath += HandleDeath;
+    }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        OnDeath -= HandleDeath;
+    }
+
+
     protected override void Start()
     {
         base.Start();
@@ -56,15 +70,20 @@ public class BatController : Enemy
         _stateMachine.Initialize(_batIdleState);
     }
 
-    private void OnDisable()
+    public override void Hurt(int damage, Vector2 hitDirection)
     {
-        StopAllCoroutines();
+        base.Hurt(damage, hitDirection);
     }
 
     private void FixedUpdate()
     {
         if (isKnockbacked || isDead) return;
         _stateMachine.Update();
+    }
+    
+    private void HandleDeath()
+    {
+        _stateMachine.TransitionTo(new BatDeathState(this, _stateMachine));
     }
 
     //private void OnDrawGizmosSelected()

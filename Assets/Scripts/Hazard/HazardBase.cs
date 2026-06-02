@@ -1,6 +1,4 @@
-using System;
 using System.Collections;
-using UnityEditor.U2D.Animation;
 using UnityEngine;
 
 public abstract class HazardBase : MonoBehaviour

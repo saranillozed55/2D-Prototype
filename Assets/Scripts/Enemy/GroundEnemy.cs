@@ -56,7 +56,7 @@ public class GroundEnemy : Enemy
         _isGrounded = CheckGrounded();
         HandleTurn();
         ClampFallSpeed();
-        EdgeDetection();
+        //EdgeDetection();
         WallDetection();
     }
 
@@ -99,44 +99,48 @@ public class GroundEnemy : Enemy
         }
     }
 
-    private void EdgeDetection()
-    {
-        if (!_isGrounded)
-        {
-            _fEdgeDetected = false;
-            return;
-        }
+    /*
+     * Edge detection works but doesn't work well with the tilemap
+     */
 
-        if (_isGrounded)
-        {
-            //bottom left corner
-            Vector2 bottomLeft = new Vector2(_boxPhysicsCollider.bounds.min.x, _boxPhysicsCollider.bounds.min.y);
+    //private void EdgeDetection()
+    //{
+    //    if (!_isGrounded)
+    //    {
+    //        _fEdgeDetected = false;
+    //        return;
+    //    }
 
-            //bottom right corner
-            Vector2 bottomRight = new Vector2(_boxPhysicsCollider.bounds.max.x, _boxPhysicsCollider.bounds.min.y);
+    //    if (_isGrounded)
+    //    {
+    //        //bottom left corner
+    //        Vector2 bottomLeft = new Vector2(_boxPhysicsCollider.bounds.min.x, _boxPhysicsCollider.bounds.min.y);
 
-            leftEdge = bottomLeft - _detectDistance;
-            rightEdge = bottomRight + _detectDistance;
+    //        //bottom right corner
+    //        Vector2 bottomRight = new Vector2(_boxPhysicsCollider.bounds.max.x, _boxPhysicsCollider.bounds.min.y);
 
-            if (_isFacingRight)
-            {
-                RaycastHit2D hit = Physics2D.Raycast(rightEdge, Vector2.down, _yDetectDistance, _groundLayerMask);
-                _fEdgeDetected = !hit; // true if no ground, false if gorund
-                if (_fEdgeDetected) Debug.Log("Right side of enemy is ledge");
-            }
-            else if (!_isFacingRight)
-            {
-                RaycastHit2D hit = Physics2D.Raycast(leftEdge, Vector2.down, _yDetectDistance, _groundLayerMask);
-                _fEdgeDetected = !hit; // true if no ground, false if gorund
-                if (_fEdgeDetected) Debug.Log("Left side of enemy is ledge");
+    //        leftEdge = bottomLeft - _detectDistance;
+    //        rightEdge = bottomRight + _detectDistance;
 
-            }
-            else
-            {
-                _fEdgeDetected = false;
-            }
-        }
-    }
+    //        if (_isFacingRight)
+    //        {
+    //            RaycastHit2D hit = Physics2D.Raycast(rightEdge, Vector2.down, _yDetectDistance, _groundLayerMask);
+    //            _fEdgeDetected = !hit; // true if no ground, false if gorund
+    //            if (_fEdgeDetected) Debug.Log("Right side of enemy is ledge");
+    //        }
+    //        else if (!_isFacingRight)
+    //        {
+    //            RaycastHit2D hit = Physics2D.Raycast(leftEdge, Vector2.down, _yDetectDistance, _groundLayerMask);
+    //            _fEdgeDetected = !hit; // true if no ground, false if gorund
+    //            if (_fEdgeDetected) Debug.Log("Left side of enemy is ledge");
+
+    //        }
+    //        else
+    //        {
+    //            _fEdgeDetected = false;
+    //        }
+    //    }
+    //}
 
     private void WallDetection()
     {

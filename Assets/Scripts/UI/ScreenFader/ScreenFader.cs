@@ -24,12 +24,17 @@ public class ScreenFader : MonoBehaviour
 
     private void OnEnable()
     {
-        
+        SceneLoader.OnSceneTransitionStart += FadeToBlack;
+        SceneLoader.OnSceneTransitionEnd += FadeFromBlack;
+
         _onPlayerDeath.OnEventRaised += FadeToBlack;
         _onPlayerRespawn.OnEventRaised += FadeFromBlack;
     }
     private void OnDisable()
     {
+        SceneLoader.OnSceneTransitionStart -= FadeToBlack;
+        SceneLoader.OnSceneTransitionEnd -= FadeFromBlack;
+
         _onPlayerDeath.OnEventRaised -= FadeToBlack;
         _onPlayerRespawn.OnEventRaised -= FadeFromBlack;
 

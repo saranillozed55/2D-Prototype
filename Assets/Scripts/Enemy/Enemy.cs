@@ -71,6 +71,7 @@ public class Enemy : Breakable
 
         _cameraShakeSource.ShakeCamera(0.1f, Vector3.up);
         HitStop.Instance.Stop(0.05f);
+        _damageFlash.CallDamageFlash();
 
         if (!isHurt && canBeKnockbacked)
         {
@@ -78,7 +79,6 @@ public class Enemy : Breakable
             Vector2 knockbackDir = ((Vector2)transform.position - hitDirection).normalized;
             StartCoroutine(KnockbackRoutine(knockbackDir));
         }
-        _damageFlash.CallDamageFlash();
     }
 
     protected override void Dead()

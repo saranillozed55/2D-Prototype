@@ -117,7 +117,6 @@ public class NecromancerBoss : BossBase
         }
     }
 
-
     private void HandleDeath() 
     {
         _stateMachine.TransitionTo(new NecromancerDeathState(this, _stateMachine));
